@@ -1,2 +1,3 @@
-source('./inst/scripts/mesenchymalClassification.R')
-source('runKStest.R')
+source('inst/scripts/mesenchymalClassification.R')
+source('inst/scripts/runKStest.R')
+source('inst/scripts/getGenesForSubtype.R')
