@@ -1,6 +1,7 @@
 message('Running KStest analysis.')
 
 library(mesenchymalSubsetAnalysis)
+library(dplyr)
 
 #import data
 message('Importing data')

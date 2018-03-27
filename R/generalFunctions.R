@@ -14,10 +14,7 @@
 NULL
 
 countsNorm <- function(counts) {
-    norm.fact <- colSums(counts)
-    t(apply(counts, 1, function(x)
-        {x/norm.fact*1000000+1}
-    ))
+  t(t(counts) / colSums(counts) * 10^6 + 1)
 }
 
 #' groupNames
