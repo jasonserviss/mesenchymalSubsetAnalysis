@@ -39,7 +39,7 @@ mes.log <- counts.log[ , groups.fetal == "Mesenchymal"]
 
 ### Plot all cell types 
 
-```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+```{r plotAllCellTypes, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
 data.frame(tsne, class = groups.fetal) %>%
   as_tibble() %>%
   ggplot() +
@@ -51,14 +51,14 @@ data.frame(tsne, class = groups.fetal) %>%
 ### t-SNE projected classification of mesenchymal cells.
 Plot the bayesian information criteria (BIC) scores for all models and cluster numbers examined.
 
-```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+```{r runBIC, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
 BIC = mclustBIC(mes.tsne, G = 1:20)
 ```
 
 ### Plot the classification and uncertainty.
 The uncertainty here is the uncertainty in converting a conditional probablility from EM to a classification in model-based clustering.
 
-```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+```{r runMclust, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
 mod1 <- Mclust(mes.tsne, G = 1:20, x = BIC)
 #summary(mod1, parameters = TRUE)
 mesDF <- tibble(
@@ -91,7 +91,7 @@ mesDF %>%
 
 ### Plot the classification after filtering cells with high (>0.2) uncertainty.
 
-```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+```{r plotClean, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
 clean <- filter(mesDF, uncertainty < 0.2)
 clean %>%
   ggplot() +
@@ -106,8 +106,7 @@ was then analyzed using the Kolmogorov-Smirnov test. For each pairwise cell type
 subclass, and gene the KS test was performed. Genes that were identified as 
 significaltly (alpha = 0.05) different in all pairwise tests for a specific 
 subclass were annotated as being specific for that class.
-```{r}
-
+```{r runKStest}
 classes <- tibble(
     sample = colnames(counts),
     class = groups.fetal
@@ -126,5 +125,5 @@ rm(sampleClasses)
 classSub <- subset(classes, !class %in% c("UndefinedMesenchymal"))
 KSres <- KStest(counts.norm[ , colnames(counts.norm) %in% classSub$sample], classSub$class, cores = 2)
 
-save(KStest1, file="~/Github/mesenchymalAnalysis/inst/KStests/KStest1.rda", compress="bzip2")
+save(KSres, file="~/data/KSres.rda", compress="bzip2")
 ```
