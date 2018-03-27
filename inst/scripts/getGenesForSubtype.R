@@ -15,3 +15,4 @@ geneList <- processKStest(fc, classes, 0.05) %>%
     ungroup()
 
 save(geneList, file = "data/geneList.rda")
+message('Done with gene list extraction.')

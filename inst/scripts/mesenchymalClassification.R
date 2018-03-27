@@ -13,25 +13,27 @@ purrr::walk(packages, library, character.only = TRUE)
 rm(packages)
 
 #import counts data and major cell types (identified by marker expression)
+message('Importing data')
 tsne <- my.tsne.2d.full.top2000.log
 counts <- counts.nodups
 counts.norm <- countsNorm(counts)
-counts.log <- log2(counts.norm)
 
 groups.mesenchymal <- groups.mesenchymal.n
 groups.fetal <- groupNames(groups.fetal)
 
 #subset mesenchymal cells
+message('Subsetting mesenchymal')
 mes.tsne <- tsne[groups.fetal == "Mesenchymal", ]
-mes.counts <- counts[ , groups.fetal == "Mesenchymal"]
-mes.norm <- counts.norm[ , groups.fetal == "Mesenchymal"]
-mes.log <- counts.log[ , groups.fetal == "Mesenchymal"]
+mes.counts <- counts[, groups.fetal == "Mesenchymal"]
+mes.norm <- counts.norm[, groups.fetal == "Mesenchymal"]
 
 #run Mclust to classify mesenchymal subtypes
+message('Running Mclust')
 BIC = mclustBIC(mes.tsne, G = 1:20)
 mod1 <- Mclust(mes.tsne, G = 1:20, x = BIC)
 
 #concatenate mesenchymal tsne and classifications
+message('Concatenating classification data')
 mesDF <- tibble(
     sample = rownames(mes.tsne),
     tsne.dim1 = mes.tsne[, 1],
@@ -53,6 +55,7 @@ mesDF <- tibble(
 )
 
 #remove cells with high classification uncertainty
+message('Removing cells with high uncertainty')
 clean <- filter(mesDF, uncertainty < 0.2)
 clean %>%
   ggplot() +
@@ -61,6 +64,7 @@ clean %>%
   scale_colour_ptol()
 
 #save classification data
+message('Saving classifications')
 classes <- tibble(
     sample = colnames(counts),
     class = groups.fetal
@@ -74,4 +78,5 @@ classes$class <- ifelse(
 )
 sampleClasses <- classes
 save(sampleClasses, file="./data/sampleClasses.rda", compress = "bzip2")
+message('Done with classification analysis.')
 
