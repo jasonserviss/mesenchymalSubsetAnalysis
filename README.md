@@ -30,7 +30,7 @@
 
 Press `Ctrl C` to exit docker. Then: 
 `docker rm $(docker ps -a -q)`
-`docker rm $(docker ps -aq)`
+`docker rmi $(docker images -q)`
 
 6) In the analysis package directory you will now find:
 
