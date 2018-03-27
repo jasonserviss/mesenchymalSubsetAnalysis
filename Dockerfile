@@ -22,7 +22,7 @@ RUN git clone https://github.com/jasonserviss/mesenchymalSubsetAnalysis.git /hom
 RUN Rscript -e "devtools::install('/home/mesenchymalSubsetAnalysis')"
 
 # Run analysis
-RUN Rscript -e "source('inst/scripts/runAllScripts.R')"
+RUN Rscript -e "source('/home/mesenchymalSubsetAnalysis/inst/scripts/runAllScripts.R')"
 
 WORKDIR /home/mesenchymalSubsetAnalysis
 
