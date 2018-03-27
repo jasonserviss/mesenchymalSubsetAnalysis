@@ -23,3 +23,4 @@ RUN Rscript -e "devtools::install('/home/mesenchymalSubsetAnalysis')"
 
 WORKDIR /home/mesenchymalSubsetAnalysis
 
+
