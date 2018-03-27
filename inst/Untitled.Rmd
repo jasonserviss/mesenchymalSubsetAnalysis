@@ -1,0 +1,160 @@
+---
+title: "Mesenchymal subset analysis"
+author: "Jason T. Serviss"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_folding: hide
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+packages <- c(
+  "mesenchymalSubsetAnalysis", "printr", "ggthemes",
+  "tidyverse", "mclust", "viridis"
+)
+purrr::walk(packages, library, character.only = TRUE)
+rm(packages)
+```
+
+t-SNE was performed using 1-Pearson's correlation after which major cell types
+were identified using gene expression profiles known for those cell types.
+```{r}
+##import and normalize data
+tsne <- my.tsne.2d.full.top2000.log #load t-SNE for all cells
+counts <- counts.nodups #load counts data
+#load cell type data for major cell types
+names <- names(groups.fetal)
+groups.fetal <- groupNames(groups.fetal)
+names(groups.fetal) <- names
+
+neuroEndocrine <- c(
+  "X1000101303.G10", "X1000101801.E8", "X1000101309.F3", "X1000101309.C10",
+  "X1000102403.D11", "X1000102401.A5", "X1000102403.H7", "X1000102403.G5",
+  "X1000102403.G4", "X1000102402.D9", "X1000101005.G12", "X1000102701.H4",
+  "X1000102701.B12", "X1000102701.B6", "X1000102701.A3", "X1000102701.H8",
+  "X1000101301.E1", "X1000102701.A2", "X1000101005.H3"
+)
+
+bool <- names(groups.fetal) %in% neuroEndocrine
+groups.fetal[bool] <- "Neuroendocrine"
+
+groups <- groups.fetal %>%
+  as.data.frame(stringsAsFactors = FALSE) %>%
+  rownames_to_column() %>%
+  setNames(c("sample", "class")) %>%
+  as_tibble()
+
+#normalize counts data
+counts.norm <- countsNorm(counts)
+counts.log <- log2(counts.norm)
+
+##subset mesenchymal data
+mes.tsne <- tsne[groups.fetal == "Mesenchymal", ]
+mes.counts <- counts[ , groups.fetal == "Mesenchymal"]
+mes.norm <- counts.norm[ , groups.fetal == "Mesenchymal"]
+mes.log <- counts.log[ , groups.fetal == "Mesenchymal"]
+```
+
+Plot all cell types in t-SNE space.
+```{r}
+tsne %>%
+  as.data.frame() %>%
+  add_column(class = groups.fetal) %>%
+  ggplot() +
+  geom_point(aes(V1, V2, colour = class)) +
+  ggthemes::theme_few() +
+  theme(legend.position = "top") +
+  labs(x = 't-SNE dim 1', y = "t-SNE dim 2") +
+  guides(colour = guide_legend(title = "Cell type"))
+```
+
+Mesenchymal cells were subset and MCLUST was used to sub-classify them.
+```{r}
+set.seed(23498)
+BIC = mclustBIC(mes.tsne, G = 1:20)
+mod1 <- Mclust(mes.tsne, G = 1:20, x = BIC)
+
+mesDF <- tibble(
+  sample = rownames(mes.tsne),
+  tsne.dim1 = mes.tsne[, 1],
+  tsne.dim2 = mes.tsne[, 2],
+  uncertainty = mod1$uncertainty, 
+  class = case_when(
+    mod1$classification == 1  ~  "Mesenchymal_1",
+    mod1$classification == 2  ~  "Mesenchymal_2",
+    mod1$classification == 3  ~  "Mesenchymal_3",
+    mod1$classification == 4  ~  "Mesenchymal_4",
+    mod1$classification == 5  ~  "Mesenchymal_5",
+    mod1$classification == 6  ~  "Mesenchymal_6",
+    mod1$classification == 7  ~  "Mesenchymal_7",
+    mod1$classification == 8  ~  "Mesenchymal_8",
+    mod1$classification == 9  ~  "Mesenchymal_9",
+    mod1$classification == 10 ~  "Mesenchymal_10",
+    mod1$classification == 11 ~  "Mesenchymal_11",
+    TRUE ~ as.character(mod1$classification)
+  )
+)
+
+ggplot(mesDF) +
+  geom_point(aes(tsne.dim1, tsne.dim2, colour = class, size = uncertainty)) +
+  ggthemes::scale_colour_ptol()
+```
+
+It was noted that MCLUST seems somewhat overzealous in the number of clusters
+it detects in the data. 
+
+Samples with an uncertainty greater than 0.2 were removed from further analysis.
+The remaining samples and their classifications are shown below.
+
+```{r}
+cleanMes <- filter(mesDF, uncertainty <= 0.2)
+cleanMes %>%
+  ggplot() +
+  geom_point(aes(tsne.dim1, tsne.dim2, colour = class)) +
+  ggthemes::scale_colour_ptol()
+```
+
+```{r}
+#save classes
+mesDF <- mutate(mesDF, class = if_else(uncertainty > 0.2, "UndefinedMesenchymal", class))
+classMod <- case_when(
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_1")$sample ~ "Mesenchymal_1",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_2")$sample ~ "Mesenchymal_2",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_3")$sample ~ "Mesenchymal_3",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_4")$sample ~ "Mesenchymal_4",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_5")$sample ~ "Mesenchymal_5",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_6")$sample ~ "Mesenchymal_6",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_7")$sample ~ "Mesenchymal_7",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_8")$sample ~ "Mesenchymal_8",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_9")$sample ~ "Mesenchymal_9",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_10")$sample ~ "Mesenchymal_10",
+  groups$sample %in% filter(mesDF, class == "Mesenchymal_11")$sample ~ "Mesenchymal_11",
+  groups$sample %in% filter(mesDF, class == "UndefinedMesenchymal")$sample ~ "UndefinedMesenchymal",
+  TRUE ~ groups$class
+)
+sampleClasses <- tibble(sample = groups$sample, class = classMod)
+save(sampleClasses, file = "data/sampleClasses.rda", compress = "bzip2")
+```
+
+Genes specific expression for each cell type (including mesenchymal subclasses)
+was then analyzed using the Kolmogorov-Smirnov test. For each pairwise cell type,
+subclass, and gene the KS test was performed. Genes that were identified as 
+significaltly (alpha = 0.05) different in all pairwise tests for a specific 
+subclass were annotated as being specific for that class.
+
+```{r, eval = FALSE}
+#note this takes quite some time to run
+ksResults <- KStest(
+  counts.norm[, colnames(counts.norm) %in% cleanMes$sample],
+  cleanMes$class,
+  cores = 4
+)
+```
+
+```{r}
+sessionInfo()
+```
+

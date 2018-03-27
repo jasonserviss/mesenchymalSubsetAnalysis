@@ -1,0 +1,130 @@
+---
+title: "Mesenchymal analysis by eye"
+author: "Jason T. Serviss"
+date: "30/06/2017"
+output:
+  html_document:
+    code_folding: hide
+    highlight: pygments
+    theme: readable
+---
+
+```{r loadLibraries, message=FALSE}
+packages <- c(
+    "mesenchymalSubsetAnalysis", 
+    "printr",
+    "ggthemes",
+    "tidyverse",
+    "mclust",
+    "viridis"
+)
+purrr::walk(packages, library, character.only = TRUE)
+rm(packages)
+```
+
+```{r setup}
+tsne <- my.tsne.2d.full.top2000.log
+counts <- counts.nodups
+counts.norm <- countsNorm(counts)
+counts.log <- log2(counts.norm)
+
+groups.mesenchymal <- groups.mesenchymal.n
+groups.fetal <- groupNames(groups.fetal)
+
+mes.tsne <- tsne[groups.fetal == "Mesenchymal", ]
+mes.counts <- counts[ , groups.fetal == "Mesenchymal"]
+mes.norm <- counts.norm[ , groups.fetal == "Mesenchymal"]
+mes.log <- counts.log[ , groups.fetal == "Mesenchymal"]
+```
+
+### Plot all cell types 
+
+```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+data.frame(tsne, class = groups.fetal) %>%
+  as_tibble() %>%
+  ggplot() +
+  geom_point(aes(X1, X2, colour = class)) +
+  theme_few() +
+  scale_colour_ptol()
+```
+
+### t-SNE projected classification of mesenchymal cells.
+Plot the bayesian information criteria (BIC) scores for all models and cluster numbers examined.
+
+```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+BIC = mclustBIC(mes.tsne, G = 1:20)
+```
+
+### Plot the classification and uncertainty.
+The uncertainty here is the uncertainty in converting a conditional probablility from EM to a classification in model-based clustering.
+
+```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+mod1 <- Mclust(mes.tsne, G = 1:20, x = BIC)
+#summary(mod1, parameters = TRUE)
+mesDF <- tibble(
+    sample = rownames(mes.tsne),
+    tsne.dim1 = mes.tsne[, 1],
+    tsne.dim2 = mes.tsne[, 2],
+    uncertainty = mod1$uncertainty, 
+    class = case_when(
+        mod1$classification == 1  ~  "Mesenchymal_1",
+        mod1$classification == 2  ~  "Mesenchymal_2",
+        mod1$classification == 3  ~  "Mesenchymal_3",
+        mod1$classification == 4  ~  "Mesenchymal_4",
+        mod1$classification == 5  ~  "Mesenchymal_5",
+        mod1$classification == 6  ~  "Mesenchymal_6",
+        mod1$classification == 7  ~  "Mesenchymal_7",
+        mod1$classification == 8  ~  "Mesenchymal_8",
+        mod1$classification == 9  ~  "Mesenchymal_9",
+        mod1$classification == 10 ~  "Mesenchymal_10",
+        TRUE ~ as.character(mod1$classification)
+    )
+)
+
+#plot mesenchymal classification
+mesDF %>%
+  ggplot() +
+  geom_point(aes(tsne.dim1, tsne.dim2, colour = class, size = uncertainty)) +
+  theme_few() +
+  scale_colour_ptol()
+```
+
+### Plot the classification after filtering cells with high (>0.2) uncertainty.
+
+```{r, fig.align='center', fig.height=8, fig.width=10, eval=TRUE, message=FALSE, warning=FALSE}
+clean <- filter(mesDF, uncertainty < 0.2)
+clean %>%
+  ggplot() +
+  geom_point(aes(tsne.dim1, tsne.dim2, colour = class)) +
+  theme_few() +
+  scale_colour_ptol()
+```
+
+### Select genes that identify each mesenchymal subset.
+Genes specific expression for each cell type (including mesenchymal subclasses)
+was then analyzed using the Kolmogorov-Smirnov test. For each pairwise cell type,
+subclass, and gene the KS test was performed. Genes that were identified as 
+significaltly (alpha = 0.05) different in all pairwise tests for a specific 
+subclass were annotated as being specific for that class.
+```{r}
+
+classes <- tibble(
+    sample = colnames(counts),
+    class = groups.fetal
+)
+
+classes$class[classes$sample %in% clean$sample] <- clean$class
+classes$class <- ifelse(
+    classes$class == "Mesenchymal", 
+    "UndefinedMesenchymal", 
+    classes$class
+)
+sampleClasses <- classes
+save(sampleClasses, file="./data/sampleClasses.rda", compress = "bzip2")
+rm(sampleClasses)
+
+classSub <- subset(classes, !class %in% c("UndefinedMesenchymal"))
+KSres <- KStest(counts.norm[ , colnames(counts.norm) %in% classSub$sample], classSub$class, cores = 2)
+
+save(KStest1, file="~/Github/mesenchymalAnalysis/inst/KStests/KStest1.rda", compress="bzip2")
+```
