@@ -1,3 +1,6 @@
 source('/home/mesenchymalSubsetAnalysis/inst/scripts/mesenchymalClassification.R')
 source('/home/mesenchymalSubsetAnalysis/inst/scripts/runKStest.R')
 source('/home/mesenchymalSubsetAnalysis/inst/scripts/getGenesForSubtype.R')
+devtools::install('/home/mesenchymalSubsetAnalysis')
+message("Rendering mesenchymalAnalysis2.Rmd")
+rmarkdown::render('/home/mesenchymalSubsetAnalysis/inst/mesenchymalAnalysis2.Rmd')

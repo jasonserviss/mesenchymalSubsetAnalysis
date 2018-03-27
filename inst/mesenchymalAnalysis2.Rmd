@@ -70,8 +70,9 @@ Genes specific expression for each cell type (including mesenchymal subclasses)
 was then analyzed using the Kolmogorov-Smirnov test. For each pairwise cell type,
 subclass, and gene the KS test was performed. Genes that were identified as 
 significaltly (alpha = 0.05) different in all pairwise tests for a specific 
-subclass were annotated as being specific for that class.
+subclass were annotated as being specific for that class. A heatmap showing the
+detected genes is shown below.
 
 ```{r kstest}
-
+classHeatmap(geneList, counts.log, sampleClasses)
 ```
