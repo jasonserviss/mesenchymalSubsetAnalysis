@@ -9,7 +9,7 @@ packages <- c(
     "mclust",
     "viridis"
 )
-purrr::walk(packages, library, character.only = TRUE)
+suppressPackageStartupMessages(purrr::walk(packages, library, character.only = TRUE))
 rm(packages)
 
 #import counts data and major cell types (identified by marker expression)
@@ -77,6 +77,6 @@ classes$class <- ifelse(
     classes$class
 )
 sampleClasses <- classes
-save(sampleClasses, file="./data/sampleClasses.rda", compress = "bzip2")
+save(sampleClasses, file = "/home/mesenchymalSubsetAnalysis/data/sampleClasses.rda", compress = "bzip2")
 message('Done with classification analysis.')
 

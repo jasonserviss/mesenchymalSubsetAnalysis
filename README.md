@@ -26,6 +26,12 @@
 
 `docker run -v $PWD:/home/mesenchymalSubsetAnalysis jasonserviss/mesenchymalsubsetanalysis Rscript -e "source('/home/mesenchymalSubsetAnalysis/inst/scripts/runAllScripts.R')"`
 
+6) Exit docker and clean-up the downloaded image:
+
+Press `Ctrl C` to exit docker. Then: 
+`docker rm $(docker ps -a -q)`
+`docker rm $(docker ps -aq)`
+
 6) In the analysis package directory you will now find:
 
   data: data that was either input to or output from the analysis

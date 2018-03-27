@@ -14,5 +14,5 @@ geneList <- processKStest(fc, classes, 0.05) %>%
     select(-n, -sigBool) %>%
     ungroup()
 
-save(geneList, file = "data/geneList.rda")
+save(geneList, file = "/home/mesenchymalSubsetAnalysis/geneList.rda")
 message('Done with gene list extraction.')
