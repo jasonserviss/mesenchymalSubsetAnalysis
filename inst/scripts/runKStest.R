@@ -7,8 +7,9 @@ library(dplyr)
 message('Importing data')
 counts <- counts.nodups
 counts.norm <- countsNorm(counts)
-classSub <- subset(sampleClasses, !class %in% c("UndefinedMesenchymal")) %>%
-filter(class %in% c("Acinar", "Beta"))
+classSub <- subset(sampleClasses, !class %in% c("UndefinedMesenchymal"))
+#%>%
+#filter(class %in% c("Acinar", "Beta"))
 
 #run the KS test
 message('Running KStest')
