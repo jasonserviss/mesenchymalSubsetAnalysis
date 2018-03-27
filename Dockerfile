@@ -21,9 +21,6 @@ RUN Rscript -e "source('https://cdn.rawgit.com/road2stat/liftrlib/aa132a2d/insta
 RUN git clone https://github.com/jasonserviss/mesenchymalSubsetAnalysis.git /home/mesenchymalSubsetAnalysis
 RUN Rscript -e "devtools::install('/home/mesenchymalSubsetAnalysis')"
 
-# Run analysis
-RUN Rscript -e "source('/home/mesenchymalSubsetAnalysis/inst/scripts/runAllScripts.R')"
-
 WORKDIR /home/mesenchymalSubsetAnalysis
 
 
