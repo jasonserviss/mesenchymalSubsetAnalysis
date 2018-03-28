@@ -1,2 +1,0 @@
-load("/Users/jasonserviss/Github/mesenchymalSubsetAnalysis/data/my_tsne_2d_full_top2000_log.rda")
-ls()
