@@ -27,6 +27,6 @@ rm(select)
 
 #run the KS test
 message('Running KStest')
-KSres <- KStest(counts.norm[idx, colnames(counts.norm) %in% classSub$sample], classSub$class, cores = 2)
+KSres <- KStest(counts.norm[idx, colnames(counts.norm) %in% classSub$sample], classSub$class)
 save(KSres, file="/home/mesenchymalSubsetAnalysis/data/KSres.rda", compress = "bzip2")
 message('Done with KStest analysis.')
