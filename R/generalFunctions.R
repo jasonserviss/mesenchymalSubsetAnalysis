@@ -517,4 +517,34 @@ normalizeVec <- function(vec) {
   (vec - min(vec)) / (max(vec) - min(vec))
 }
 
+#' foldChangePerClass
+#'
+#' Calculates fold change for each gene with each class vs all other classes.
+#'
+#' @name foldChangePerClass
+#' @rdname foldChangePerClass
+#' @author Jason T. Serviss
+#' @param counts The matrix holding expression values.
+#' @param class A tibble with columns \emph{class} and \emph{sample} indicating
+#'    the class and sample ID respectivley.
+#' @keywords foldChangePerClass
+#'
+#'
+#' @export
+#' @importFrom dplyr filter
+NULL
 
+foldChangePerClass <- function(counts, classes) {
+  uGroups <- unique(classes$class)
+  combs <- combn(uGroups, 2)
+  
+  res <- sapply(1:ncol(combs), function(x) {
+    samplesA <- filter(classes, class == combs[1, x])$sample
+    samplesB <- filter(classes, class == combs[2, x])$sample
+    a <- rowMeans(counts[, colnames(counts) %in% samplesA])
+    b <- rowMeans(counts[, colnames(counts) %in% samplesB])
+    a/b
+  })
+  colnames(res) <- paste(combs[1, ], combs[2, ], sep = "-")
+  return(res)
+}
