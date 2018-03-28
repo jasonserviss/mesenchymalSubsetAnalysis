@@ -67,11 +67,14 @@ mes.tsne %>%
 
 ### Select genes that identify each mesenchymal subset.
 Genes specific expression for each cell type (including mesenchymal subclasses)
-was then analyzed using the Kolmogorov-Smirnov test. For each pairwise cell type,
-subclass, and gene the KS test was performed. Genes that were identified as 
-significaltly (alpha = 0.05) different in all pairwise tests for a specific 
-subclass were annotated as being specific for that class. A heatmap showing the
-detected genes is shown below.
+was then analyzed. This is done in two steps. First, a pre-selection examines 
+the pairwise fold change between all cell types and the 200 genes with the 
+highest absolute fold change per cell type comparison are choosen. Second, we
+use the Kolmogorov-Smirnov test to compare each pairwise cell type and
+subclass for each gene. Genes that are identified as significantly 
+(alpha = 0.05) different in all pairwise tests for a specific cellType/subclass 
+are annotated as being specific for that class. A heatmap showing the detected 
+genes is shown below.
 
 ```{r kstest}
 classHeatmap(geneList, counts.log, sampleClasses)
