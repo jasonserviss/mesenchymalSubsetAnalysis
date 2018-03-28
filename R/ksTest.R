@@ -144,19 +144,22 @@ KStest <- function(
   
   #setup y variable for ks.test
   c2 <- splitCountsByClass(n, counts, classes, 2)
+  rm(counts)
  
  #run ks.test for each class comparison (outer; mclapply) and
  # gene (inner; map2_dfr). Name combinations in object, reformat to a data.frame
  # and then tibble.
- map(1:length(c1), function(i) {
+ res <- map(1:length(c1), function(i) {
    message(i)
    x <- c1[[i]]
    y <- c2[[i]]
    purrr::map2_dfr(x, y, ~runKS(.x, .y), .id = "gene")
- }) %>%
-  setNames(cmbNames) %>%
-  dplyr::bind_rows(.id = "combination") %>%
-  tibble::as_tibble()
+ })
+ rm(c1); rm(c2)
+ 
+ res <- setNames(res, cmbNames)
+ res <- dplyr::bind_rows(res, .id = "combination")
+ res <- tibble::as_tibble(res)
 }
 
 #sets up x and y variables for ks.test
