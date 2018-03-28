@@ -100,7 +100,8 @@ my.ks.test <- function (x, y, check = FALSE, ...){
 #' @examples
 #' #nothing here yet
 #' @export
-#' @importFrom parallel mclapply
+#' @importFrom future.apply future_lapply
+#' @importFrom future plan multiprocess
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_rows
 #' @importFrom magrittr "%>%"
@@ -151,11 +152,12 @@ KStest <- function(
  #run ks.test for each class comparison (outer; mclapply) and
  # gene (inner; map2_dfr). Name combinations in object, reformat to a data.frame
  # and then tibble.
- parallel::mclapply(1:length(c1), function(i) {
+ plan(multiprocess)
+ future.apply::future_lapply(1:length(c1), function(i) {
    x <- c1[[i]]
    y <- c2[[i]]
    purrr::map2_dfr(x, y, ~runKS(.x, .y), .id = "gene")
- }, mc.cores = cores) %>%
+ }) %>%
   setNames(cmbNames) %>%
   dplyr::bind_rows(.id = "combination") %>%
   tibble::as_tibble()
