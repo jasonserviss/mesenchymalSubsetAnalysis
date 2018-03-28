@@ -93,26 +93,22 @@ my.ks.test <- function (x, y, check = FALSE, ...){
 #'  Should have both colnames and rownames.
 #' @param classes Character; vector with length ncol(exp) indicating the class
 #'  of each sample.
-#' @param cores Numeric; indicates the number of cores to run the analysis on.
 #' @return A tibble with one row per gene and class combination and the
 #'  corresponding test statistic and p.value.
 #' @author Jason T. Serviss
 #' @examples
 #' #nothing here yet
 #' @export
-#' @importFrom future.apply future_lapply
-#' @importFrom future plan multiprocess
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_rows
 #' @importFrom magrittr "%>%"
-#' @importFrom purrr map2_dfr
+#' @importFrom purrr map2_dfr map
 #' @importFrom stats setNames
 #' @importFrom utils combn
 
 KStest <- function(
   counts,
-  classes,
-  cores = 4
+  classes
 ){
   
   #input checks
@@ -152,8 +148,7 @@ KStest <- function(
  #run ks.test for each class comparison (outer; mclapply) and
  # gene (inner; map2_dfr). Name combinations in object, reformat to a data.frame
  # and then tibble.
- plan(multiprocess)
- future.apply::future_lapply(1:length(c1), function(i) {
+ map(1:length(c1), function(i) {
    x <- c1[[i]]
    y <- c2[[i]]
    purrr::map2_dfr(x, y, ~runKS(.x, .y), .id = "gene")

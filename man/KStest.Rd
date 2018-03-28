@@ -4,7 +4,7 @@
 \alias{KStest}
 \title{KStest}
 \usage{
-KStest(counts, classes, cores = 4)
+KStest(counts, classes)
 }
 \arguments{
 \item{counts}{Matrix; counts matrix with samples as columns and genes as rows.
@@ -12,8 +12,6 @@ Should have both colnames and rownames.}
 
 \item{classes}{Character; vector with length ncol(exp) indicating the class
 of each sample.}
-
-\item{cores}{Numeric; indicates the number of cores to run the analysis on.}
 }
 \value{
 A tibble with one row per gene and class combination and the
