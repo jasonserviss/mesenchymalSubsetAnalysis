@@ -15,7 +15,7 @@ RUN  rm -f /var/lib/dpkg/available \
 
 RUN Rscript -e "install.packages(c('devtools','knitr','rmarkdown','shiny','RCurl'), repos = 'https://cran.rstudio.com')"
 
-RUN Rscript -e "source('https://cdn.rawgit.com/road2stat/liftrlib/aa132a2d/install_cran.R');install_cran(c('mclust/5.3','printr/0.1','ggthemes/3.4.0','viridis/0.4.0','viridisLite/0.2.0', 'purrr/0.2.4', 'future/1.6.2', 'future.apply/0.1.0'))"
+RUN Rscript -e "source('https://cdn.rawgit.com/road2stat/liftrlib/aa132a2d/install_cran.R');install_cran(c('mclust/5.3','printr/0.1','ggthemes/3.4.0','viridis/0.4.0','viridisLite/0.2.0', 'purrr/0.2.4'))"
 
 # Clone and install mesenchymalSubsetAnalysis package
 RUN git clone https://github.com/jasonserviss/mesenchymalSubsetAnalysis.git /home/mesenchymalSubsetAnalysis
