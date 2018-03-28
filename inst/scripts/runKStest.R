@@ -14,13 +14,13 @@ classSub <- subset(sampleClasses, !class %in% c("UndefinedMesenchymal"))
 #Pre-filter
 message('Pre-filtering genes')
 select <- foldChangePerClass(counts.norm, sampleClasses) %>%
-matrix_to_tibble("gene") %>%
-gather(comparison, foldChange, -gene) %>%
-mutate(abs.FC = abs(foldChange)) %>%
-group_by(comparison) %>%
-top_n(n = 200, wt = abs.FC) %>%
-pull(gene) %>%
-unique()
+  matrix_to_tibble("gene") %>%
+  gather(comparison, foldChange, -gene) %>%
+  mutate(abs.FC = abs(foldChange)) %>%
+  group_by(comparison) %>%
+  top_n(n = 200, wt = abs.FC) %>%
+  pull(gene) %>%
+  unique()
 
 idx <- which(rownames(counts.norm) %in% select)
 rm(select)

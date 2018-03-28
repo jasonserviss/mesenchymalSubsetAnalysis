@@ -20,7 +20,7 @@ NULL
 classHeatmap <- function(data, counts.log, classes) {
   
   #cluster to get gene order
-  uClass <- unique(data$class)
+  uClass <- sort(unique(data$class))
   geneOrd <- function(c) {
     IDs <- filter(data, class == c)$gene
     if(length(IDs) == 1) {
@@ -66,7 +66,7 @@ classHeatmap <- function(data, counts.log, classes) {
   #plot
   p <- ggplot(m, aes(plotSample, plotGene)) +
   geom_tile(aes(fill = value)) +
-  facet_grid(geneClass ~ sampleClass, scales = "free") +
+  facet_grid(. ~ sampleClass, scales = "free") +
   scale_fill_viridis() +
   theme_few() +
   theme(

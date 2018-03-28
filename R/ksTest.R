@@ -159,7 +159,7 @@ KStest <- function(
  
  res <- setNames(res, cmbNames)
  res <- dplyr::bind_rows(res, .id = "combination")
- res <- tibble::as_tibble(res)
+ tibble::as_tibble(res)
 }
 
 #sets up x and y variables for ks.test
