@@ -33,24 +33,24 @@ countsNorm <- function(counts) {
 #' @importFrom dplyr case_when
 NULL
 
-groupNames <- function(groups.fetal) {
+groupNames <- function(g) {
   case_when(
-    groups.fetal == "GCG.fetal" ~ "Alpha",
-    groups.fetal == "INS.fetal" ~ "Beta",
-    groups.fetal == "SST.fetal" ~ "Delta",
-    groups.fetal == "ductal.fetal" ~ "Ductal",
-    groups.fetal == "mesenchymal.fetal" ~ "Mesenchymal",
-    groups.fetal == "blood.fetal" ~ "Blood",
-    groups.fetal == "endocrine.progenitor" ~ "Endocrine progenitor",
-    groups.fetal == "PRSS1.fetal" ~ "Acinar",
-    groups.fetal == "vascular.fetal" ~ "Endothelial",
-    names(groups.fetal) %in% c(
+    g == "GCG.fetal" ~ "Alpha",
+    g == "INS.fetal" ~ "Beta",
+    g == "SST.fetal" ~ "Delta",
+    g == "ductal.fetal" ~ "Ductal",
+    g == "mesenchymal.fetal" ~ "Mesenchymal",
+    g == "blood.fetal" ~ "Blood",
+    g == "endocrine.progenitor" ~ "Endocrine progenitor",
+    g == "PRSS1.fetal" ~ "Acinar",
+    g == "vascular.fetal" ~ "Endothelial",
+    names(g) %in% c(
       "X1000101303.G4", "X1000101306.H6", "X1000101306.E4",
       "X1000101306.A9", "X1000101309.A10", "X1000101306.D8",
       "X1000101309.G2", "X1000101302.A4", "X1000101302.H11",
       "X1000101301.B5"
     ) ~ "Undefined1",
-    names(groups.fetal) %in% c(
+    names(g) %in% c(
       "X1000101303.C11", "X1000101303.D6", "X1000101801.G12",
       "X1000101309.E4", "X1000101309.C4", "X1000101306.G10",
       "X1000101302.G6", "X1000101302.D6", "X1000101302.F11",
