@@ -12,7 +12,7 @@ geneList <- processKStest(KSres, sampleClasses$class, 0.05) %>%
     filter(n() == 1) %>%
     select(-sigBool) %>%
     ungroup() %>%
-    arrange(id, desc(statSum))
+    arrange(id, desc(statSum)) %>%
     rename(class = id)
 
 save(geneList, file = "/home/mesenchymalSubsetAnalysis/data/geneList.rda")

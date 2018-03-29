@@ -28,7 +28,9 @@
 
 6) Exit docker and clean-up the downloaded image:
 
-Press `Ctrl C` to exit docker. Then: 
+`docker ps -a | awk '{ print $1,$2 }' | grep jasonserviss/mesenchymalsubsetanalysis | awk '{print $1 }' | xargs -I {} docker rm {}`
+`docker rmi 'jasonserviss/mesenchymalsubsetanalysis'`
+
 `docker rm $(docker ps -a -q)`
 `docker rmi $(docker images -q)`
 
