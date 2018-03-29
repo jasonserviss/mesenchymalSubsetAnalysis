@@ -2,21 +2,14 @@
 % Please edit documentation in R/generalFunctions.R
 \name{col64}
 \alias{col64}
-\alias{col64}
 \title{col64}
 \description{
-Diverging color palette.
-
 col64
 }
 \examples{
 col64()
-
-col64()
 }
 \author{
-Jason T. Serviss
-
 Jason T. Serviss
 }
 \keyword{col64}

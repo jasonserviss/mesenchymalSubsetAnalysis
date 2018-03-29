@@ -4,7 +4,7 @@
 \alias{groupNames}
 \title{groupNames}
 \arguments{
-\item{groups.fetal}{Character vector with Matrins groupings of the cells.}
+\item{groups.fetal}{Character vector with Martin's groupings of the cells.}
 }
 \description{
 groupNames

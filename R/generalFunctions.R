@@ -23,7 +23,7 @@ countsNorm <- function(counts) {
 #' @name groupNames
 #' @rdname groupNames
 #' @author Jason T. Serviss
-#' @param groups.fetal Character vector with Matrins groupings of the cells.
+#' @param groups.fetal Character vector with Martin's groupings of the cells.
 #' @keywords groupNames
 #' @examples
 #'
