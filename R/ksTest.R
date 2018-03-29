@@ -150,7 +150,6 @@ KStest <- function(
  # gene (inner; map2_dfr). Name combinations in object, reformat to a data.frame
  # and then tibble.
  res <- map(1:length(c1), function(i) {
-   message(i)
    x <- c1[[i]]
    y <- c2[[i]]
    purrr::map2_dfr(x, y, ~runKS(.x, .y), .id = "gene")
