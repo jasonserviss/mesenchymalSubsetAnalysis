@@ -1,6 +1,7 @@
 source('/home/mesenchymalSubsetAnalysis/inst/scripts/mesenchymalClassification.R')
 source('/home/mesenchymalSubsetAnalysis/inst/scripts/runKStest.R')
 source('/home/mesenchymalSubsetAnalysis/inst/scripts/getGenesForSubtype.R')
+rm(list=ls())
 message("Re-installing package")
 devtools::install('/home/mesenchymalSubsetAnalysis')
 message("Rendering mesenchymalAnalysis2.Rmd")
