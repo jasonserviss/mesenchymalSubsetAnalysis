@@ -17,15 +17,13 @@ message('Importing data')
 tsne <- my.tsne.2d.full.top2000.log
 counts <- counts.nodups
 counts.norm <- countsNorm(counts)
-
 groups.mesenchymal <- groups.mesenchymal.n
-groups.fetal <- groupNames(groups.fetal)
 
 #subset mesenchymal cells
 message('Subsetting mesenchymal')
-mes.tsne <- tsne[groups.fetal == "Mesenchymal", ]
-mes.counts <- counts[, groups.fetal == "Mesenchymal"]
-mes.norm <- counts.norm[, groups.fetal == "Mesenchymal"]
+mes.tsne <- tsne[groupNames(groups.fetal) == "Mesenchymal", ]
+mes.counts <- counts[, groupNames(groups.fetal) == "Mesenchymal"]
+mes.norm <- counts.norm[, groupNames(groups.fetal) == "Mesenchymal"]
 
 #run Mclust to classify mesenchymal subtypes
 message('Running Mclust')
@@ -67,7 +65,7 @@ clean %>%
 message('Saving classifications')
 classes <- tibble(
     sample = colnames(counts),
-    class = groups.fetal
+    class = groupNames(groups.fetal)
 )
 
 classes$class[classes$sample %in% clean$sample] <- clean$class
